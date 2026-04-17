@@ -82,9 +82,12 @@ async function fetchPlaywright(url: string): Promise<OgMetadata | null> {
     const chromium = (await import('@sparticuz/chromium')).default;
     const { chromium: pw } = await import('playwright-core');
 
+    const executablePath = await chromium.executablePath();
+    console.log('[playwright] executablePath:', executablePath);
+
     const browser = await pw.launch({
       args: chromium.args,
-      executablePath: await chromium.executablePath(),
+      executablePath,
       headless: true,
     });
 
@@ -113,7 +116,8 @@ async function fetchPlaywright(url: string): Promise<OgMetadata | null> {
     } finally {
       await browser.close();
     }
-  } catch {
+  } catch (e) {
+    console.error('[playwright] error:', e instanceof Error ? e.message : String(e));
     return null;
   }
 }
