@@ -25,12 +25,12 @@ GET /api/qr-winner
 - `Cache-Control: public, s-maxage=3600, stale-while-revalidate=86400`
 - `Access-Control-Allow-Origin: *`
 
-**Live endpoint:** `https://<vercel-url>/api/qr-winner` *(fill in after deploy)*
+**Live endpoint:** `https://qr-metadata-service.vercel.app/api/qr-winner`
 
 **Example:**
 
 ```bash
-curl -s https://<vercel-url>/api/qr-winner | jq .
+curl -s https://qr-metadata-service.vercel.app/api/qr-winner | jq .
 ```
 
 ## Caching
