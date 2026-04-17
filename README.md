@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# qr-metadata-service
 
-## Getting Started
+A tiny Next.js service that fetches the current [QR Daily Link](https://qrcoin.fun) winner and resolves its Open Graph metadata using a JS-executing strategy (Microlink API with a plain-fetch fallback). Results are cached via Next.js ISR for ~1 hour.
 
-First, run the development server:
+## Endpoint
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+GET /api/qr-winner
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Response schema:**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```ts
+{
+  winner: { id, token_id, winner_address, amount, url, display_name, ... } | null;
+  og: { image: string | null; title: string | null; description: string | null };
+  source: 'microlink' | 'direct' | 'none';
+  fetchedAt: string; // ISO 8601
+}
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**HTTP contract:**
 
-## Learn More
+- `200` always; `winner: null` when upstream has no winner.
+- `Cache-Control: public, s-maxage=3600, stale-while-revalidate=86400`
+- `Access-Control-Allow-Origin: *`
 
-To learn more about Next.js, take a look at the following resources:
+**Live endpoint:** `https://<vercel-url>/api/qr-winner` *(fill in after deploy)*
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Example:**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+curl -s https://<vercel-url>/api/qr-winner | jq .
+```
 
-## Deploy on Vercel
+## Caching
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Next.js ISR revalidates once per hour. With one winner per day the entire user base is served from a single upstream fetch.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Run locally
+
+```bash
+npm install
+npm run dev
+# Visit http://localhost:3000 for the debug UI
+# curl http://localhost:3000/api/qr-winner
+```
