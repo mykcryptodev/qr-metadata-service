@@ -95,7 +95,10 @@ async function fetchPlaywright(url: string): Promise<OgMetadata | null> {
 
     try {
       const page = await browser.newPage();
-      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 });
+      await page.setExtraHTTPHeaders({
+        'Accept-Language': 'en-US,en;q=0.9',
+      });
+      await page.goto(url, { waitUntil: 'networkidle', timeout: 25000 });
 
       const og = await page.evaluate(() => {
         const getMeta = (prop: string) =>
@@ -110,6 +113,7 @@ async function fetchPlaywright(url: string): Promise<OgMetadata | null> {
       });
 
       if (!og.image && !og.title) return null;
+      if (isChallenge(og.title)) return null;
       return {
         image: og.image,
         title: og.title?.trim() ?? null,
