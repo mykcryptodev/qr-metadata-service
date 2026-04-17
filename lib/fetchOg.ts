@@ -83,7 +83,7 @@ async function fetchPlaywright(url: string): Promise<OgMetadata | null> {
     const { chromium: pw } = await import('playwright-core');
 
     const CHROMIUM_BINARY_URL =
-      'https://github.com/Sparticuz/chromium/releases/download/v147.0.0/chromium-v147.0.0-pack.tar';
+      'https://github.com/Sparticuz/chromium/releases/download/v147.0.0/chromium-v147.0.0-pack.x64.tar';
     const executablePath = await chromium.executablePath(CHROMIUM_BINARY_URL);
     console.log('[playwright] executablePath:', executablePath);
 

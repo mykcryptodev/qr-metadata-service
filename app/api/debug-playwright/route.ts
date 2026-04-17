@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export const maxDuration = 30;
 
 const CHROMIUM_BINARY_URL =
-  'https://github.com/Sparticuz/chromium/releases/download/v147.0.0/chromium-v147.0.0-pack.tar';
+  'https://github.com/Sparticuz/chromium/releases/download/v147.0.0/chromium-v147.0.0-pack.x64.tar';
 
 export async function GET() {
   const steps: string[] = [];
