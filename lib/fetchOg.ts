@@ -77,9 +77,50 @@ async function fetchMicrolink(url: string): Promise<OgMetadata | null> {
   }
 }
 
+async function fetchPlaywright(url: string): Promise<OgMetadata | null> {
+  try {
+    const chromium = (await import('@sparticuz/chromium')).default;
+    const { chromium: pw } = await import('playwright-core');
+
+    const browser = await pw.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: true,
+    });
+
+    try {
+      const page = await browser.newPage();
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 });
+
+      const og = await page.evaluate(() => {
+        const getMeta = (prop: string) =>
+          document.querySelector(`meta[property="${prop}"]`)?.getAttribute('content') ??
+          document.querySelector(`meta[name="${prop}"]`)?.getAttribute('content') ??
+          null;
+        return {
+          image: getMeta('og:image'),
+          title: getMeta('og:title') ?? document.title ?? null,
+          description: getMeta('og:description'),
+        };
+      });
+
+      if (!og.image && !og.title) return null;
+      return {
+        image: og.image,
+        title: og.title?.trim() ?? null,
+        description: og.description?.trim() ?? null,
+      };
+    } finally {
+      await browser.close();
+    }
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchOg(
   url: string,
-): Promise<{ og: OgMetadata; source: 'microlink' | 'direct' | 'none' }> {
+): Promise<{ og: OgMetadata; source: 'microlink' | 'direct' | 'playwright' | 'none' }> {
   const direct = await fetchDirect(url);
   if (direct && (direct.image || direct.title)) {
     return { og: direct, source: 'direct' };
@@ -88,6 +129,11 @@ export async function fetchOg(
   const micro = await fetchMicrolink(url);
   if (micro && (micro.image || micro.title)) {
     return { og: micro, source: 'microlink' };
+  }
+
+  const playwright = await fetchPlaywright(url);
+  if (playwright && (playwright.image || playwright.title)) {
+    return { og: playwright, source: 'playwright' };
   }
 
   return {

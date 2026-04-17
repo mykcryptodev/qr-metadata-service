@@ -28,6 +28,6 @@ export type OgMetadata = {
 export type QRWinnerApiResponse = {
   winner: QRDailyLinkWinner | null;
   og: OgMetadata;
-  source: 'microlink' | 'direct' | 'none';
+  source: 'microlink' | 'direct' | 'playwright' | 'none';
   fetchedAt: string;
 };

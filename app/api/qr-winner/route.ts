@@ -5,6 +5,7 @@ import { fetchCurrentWinner } from '@/lib/fetchWinner';
 import type { QRWinnerApiResponse } from '@/lib/types';
 
 export const revalidate = 3600;
+export const maxDuration = 30;
 
 const CACHE_CONTROL = 'public, s-maxage=3600, stale-while-revalidate=86400';
 const CORS_HEADERS = {
