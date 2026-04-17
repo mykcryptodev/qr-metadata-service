@@ -117,7 +117,8 @@ async function fetchPlaywright(url: string): Promise<OgMetadata | null> {
       await browser.close();
     }
   } catch (e) {
-    console.error('[playwright] error:', e instanceof Error ? e.message : String(e));
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error('[playwright] error:', msg);
     return null;
   }
 }
