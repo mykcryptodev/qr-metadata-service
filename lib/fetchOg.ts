@@ -85,7 +85,6 @@ async function fetchPlaywright(url: string): Promise<OgMetadata | null> {
     const CHROMIUM_BINARY_URL =
       'https://github.com/Sparticuz/chromium/releases/download/v147.0.0/chromium-v147.0.0-pack.x64.tar';
     const executablePath = await chromium.executablePath(CHROMIUM_BINARY_URL);
-    console.log('[playwright] executablePath:', executablePath);
 
     const browser = await pw.launch({
       args: chromium.args,
