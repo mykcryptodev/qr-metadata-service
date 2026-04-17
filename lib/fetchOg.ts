@@ -79,10 +79,12 @@ async function fetchMicrolink(url: string): Promise<OgMetadata | null> {
 
 async function fetchPlaywright(url: string): Promise<OgMetadata | null> {
   try {
-    const chromium = (await import('@sparticuz/chromium')).default;
+    const chromium = (await import('@sparticuz/chromium-min')).default;
     const { chromium: pw } = await import('playwright-core');
 
-    const executablePath = await chromium.executablePath();
+    const CHROMIUM_BINARY_URL =
+      'https://github.com/Sparticuz/chromium/releases/download/v147.0.0/chromium-v147.0.0-pack.tar';
+    const executablePath = await chromium.executablePath(CHROMIUM_BINARY_URL);
     console.log('[playwright] executablePath:', executablePath);
 
     const browser = await pw.launch({

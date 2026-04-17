@@ -2,15 +2,18 @@ import { NextResponse } from 'next/server';
 
 export const maxDuration = 30;
 
+const CHROMIUM_BINARY_URL =
+  'https://github.com/Sparticuz/chromium/releases/download/v147.0.0/chromium-v147.0.0-pack.tar';
+
 export async function GET() {
   const steps: string[] = [];
   try {
-    steps.push('importing @sparticuz/chromium');
-    const chromium = (await import('@sparticuz/chromium')).default;
-    steps.push('imported chromium');
+    steps.push('importing @sparticuz/chromium-min');
+    const chromium = (await import('@sparticuz/chromium-min')).default;
+    steps.push('imported chromium-min');
 
     steps.push('getting executablePath');
-    const executablePath = await chromium.executablePath();
+    const executablePath = await chromium.executablePath(CHROMIUM_BINARY_URL);
     steps.push(`executablePath: ${executablePath}`);
 
     steps.push('importing playwright-core');
